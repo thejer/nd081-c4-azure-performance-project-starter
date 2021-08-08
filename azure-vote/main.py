@@ -4,7 +4,6 @@ import socket
 
 import redis
 from flask import Flask, request, render_template
-from datetime import datetime
 # App Insights
 # TODO: Import required libraries for App Insights
 from opencensus.ext.azure.log_exporter import AzureLogHandler
@@ -30,22 +29,22 @@ config_integration.trace_integrations(['logging'])
 config_integration.trace_integrations(['requests'])
 
 logger = logging.getLogger(__name__)
-handler = AzureLogHandler(connection_string='InstrumentationKey=[ca4dc483-e46b-4215-9e94-02f80f0b8cbb]')
+handler = AzureLogHandler(connection_string='InstrumentationKey=ca4dc483-e46b-4215-9e94-02f80f0b8cbb')
 handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
 logger.addHandler(handler)
 # Logging custom Events 
-logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=[ca4dc483-e46b-4215-9e94-02f80f0b8cbb]'))
+logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=ca4dc483-e46b-4215-9e94-02f80f0b8cbb'))
 logger.setLevel(logging.INFO)
 
 # Metrics
 exporter = metrics_exporter.new_metrics_exporter(
     enable_standard_metrics=True,
-    connection_string='InstrumentationKey=[your-guid]')
+    connection_string='InstrumentationKey=ca4dc483-e46b-4215-9e94-02f80f0b8cbb')
 view_manager.register_exporter(exporter)
 
 # Tracing
 tracer = Tracer(
-    exporter=AzureExporter(connection_string='InstrumentationKey=[ca4dc483-e46b-4215-9e94-02f80f0b8cbb]'),
+    exporter=AzureExporter(connection_string='InstrumentationKey=ca4dc483-e46b-4215-9e94-02f80f0b8cbb'),
     sampler=ProbabilitySampler(1.0),
 )
 
@@ -54,7 +53,7 @@ app = Flask(__name__)
 # Requests
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string='InstrumentationKey=[ca4dc483-e46b-4215-9e94-02f80f0b8cbb]'),
+    exporter=AzureExporter(connection_string='InstrumentationKey=ca4dc483-e46b-4215-9e94-02f80f0b8cbb'),
     sampler=ProbabilitySampler(rate=1.0)
 )
 
