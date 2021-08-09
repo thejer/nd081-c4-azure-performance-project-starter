@@ -76,11 +76,26 @@ else:
     title = app.config['TITLE']
 
 # Redis Connection
-r = redis.Redis()
+# r = redis.Redis()
 
 # Change title to host name to demo NLB
 if app.config['SHOWHOST'] == "true":
     title = socket.gethostname()
+
+redis_server = os.environ['REDIS']
+
+try:
+    if "REDIS_PWD" in os.environ:
+        r = redis.StrictRedis(
+            host=redis_server,
+            port=6379,
+            password=os.environ['REDIS_PWD']
+        )
+    else:
+        r = redis.Redis(redis_server)
+    r.ping()
+except redis.ConnectionError:
+    exit("Failed to connect to Redis, terminating...")
 
 # Init Redis
 if not r.get(button1): r.set(button1, 0)
